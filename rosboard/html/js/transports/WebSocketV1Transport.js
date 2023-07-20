@@ -12,7 +12,14 @@ class WebSocketV1Transport {
     connect() {
       var protocolPrefix = (window.location.protocol === 'https:') ? 'wss:' : 'ws:';
       let abspath = protocolPrefix + '//' + location.host + this.path;
-  
+
+      let baseUrl = new URLSearchParams(document.location.search).get("baseurl")
+      if (baseUrl) {
+        let wsUrl = new URL(baseUrl);
+        wsUrl.protocol = wsUrl.protocol === 'https:' ? 'wss:' : 'ws'
+        abspath = wsUrl.href + 'proxy/18888' + this.path
+      }
+
       let that = this;
   
       this.ws = new WebSocket(abspath);
