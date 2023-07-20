@@ -1,0 +1,3 @@
+<launch>
+    <node pkg="rosboard" type="rosboard_node" name="ros_board"></node>
+</launch>
