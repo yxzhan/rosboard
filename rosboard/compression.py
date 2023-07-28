@@ -146,10 +146,11 @@ def compress_compressed_image(msg, output):
             stride = int(np.ceil(max(img.shape[0] / 800.0, img.shape[1] / 800.0)))
             img = img[::stride,::stride]
         img_jpeg = encode_jpeg(img)
+        output["_data_jpeg"] = base64.b64encode(img_jpeg).decode()
+        output["_data_shape"] = list(original_shape)
     except Exception as e:
         output["_error"] = "Error: %s" % str(e)
-    output["_data_jpeg"] = base64.b64encode(img_jpeg).decode()
-    output["_data_shape"] = list(original_shape)
+
             
 
 def compress_image(msg, output):
@@ -160,7 +161,7 @@ def compress_image(msg, output):
         output["_error"] = "Please install simplejpeg, cv2 (OpenCV), or PIL (pillow) for image support."
         return
 
-    cv2_img = imgmsg_to_cv2(msg, flip_channels = True)    
+    cv2_img = imgmsg_to_cv2(msg, flip_channels = False)
     original_shape = cv2_img.shape
 
     # if image has alpha channel, cut it out since we will ultimately compress as jpeg
@@ -173,9 +174,9 @@ def compress_image(msg, output):
         cv2_img = np.stack((cv2_img[:,:,0], cv2_img[:,:,1], np.zeros(cv2_img[:,:,0].shape)), axis = -1)
 
     # enforce <800px max dimension, and do a stride-based resize
-    if cv2_img.shape[0] > 800 or cv2_img.shape[1] > 800:
-        stride = int(np.ceil(max(cv2_img.shape[0] / 800.0, cv2_img.shape[1] / 800.0)))
-        cv2_img = cv2_img[::stride,::stride]
+    # if cv2_img.shape[0] > 800 or cv2_img.shape[1] > 800:
+    #     stride = int(np.ceil(max(cv2_img.shape[0] / 800.0, cv2_img.shape[1] / 800.0)))
+    #     cv2_img = cv2_img[::stride,::stride]
     
     # if image format isn't already uint8, make it uint8 for visualization purposes
     if cv2_img.dtype != np.uint8:

@@ -49,7 +49,7 @@ def imgmsg_to_cv2(data, desired_encoding="passthrough", flip_channels=False):
     elif (encoding == 'rgba16' and not flip_channels) or (encoding == 'bgra16' and flip_channels):
         return numpy.frombuffer(data.data, numpy.uint16).reshape((data.height, data.width, 4))[:, :, ::-1][:,:,1:]
     # 8-bit unsigned int types
-    elif encoding == 'mono8' or encoding == '8UC1':
+    elif encoding == 'mono8' or encoding == '8UC1' or encoding == 'bayer_grbg8':
         return numpy.frombuffer(data.data, numpy.uint8).reshape((data.height, data.width))
     elif encoding == '8UC2':
         return numpy.frombuffer(data.data, numpy.uint8).reshape((data.height, data.width, 2))
