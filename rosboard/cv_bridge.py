@@ -54,7 +54,7 @@ def imgmsg_to_cv2(data, desired_encoding="passthrough", flip_channels=False):
     elif encoding == '8UC2':
         return numpy.frombuffer(data.data, numpy.uint8).reshape((data.height, data.width, 2))
     elif encoding == '8UC3':
-        return numpy.frombuffer(data.data, numpy.uint8).reshape((data.height, data.width, 3))
+        return numpy.frombuffer(data.data, numpy.uint8).reshape((data.height, data.width, 3))[:, :, ::-1]
     elif encoding == '8UC4':
         return numpy.frombuffer(data.data, numpy.uint8).reshape((data.height, data.width, 4))
     # 16-bit unsigned int types

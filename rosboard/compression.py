@@ -161,7 +161,7 @@ def compress_image(msg, output):
         output["_error"] = "Please install simplejpeg, cv2 (OpenCV), or PIL (pillow) for image support."
         return
 
-    cv2_img = imgmsg_to_cv2(msg, flip_channels = False)
+    cv2_img = imgmsg_to_cv2(msg, flip_channels = True)
     original_shape = cv2_img.shape
 
     # if image has alpha channel, cut it out since we will ultimately compress as jpeg
@@ -173,10 +173,11 @@ def compress_image(msg, output):
     if len(cv2_img.shape) == 3 and cv2_img.shape[2] == 2:
         cv2_img = np.stack((cv2_img[:,:,0], cv2_img[:,:,1], np.zeros(cv2_img[:,:,0].shape)), axis = -1)
 
-    # enforce <800px max dimension, and do a stride-based resize
-    # if cv2_img.shape[0] > 800 or cv2_img.shape[1] > 800:
-    #     stride = int(np.ceil(max(cv2_img.shape[0] / 800.0, cv2_img.shape[1] / 800.0)))
-    #     cv2_img = cv2_img[::stride,::stride]
+    # enforce <1600px max dimension, and do a stride-based resize
+    image_max_shape = 1600.0
+    if cv2_img.shape[0] > image_max_shape or cv2_img.shape[1] > image_max_shape:
+        stride = int(np.ceil(max(cv2_img.shape[0] / image_max_shape, cv2_img.shape[1] / image_max_shape)))
+        cv2_img = cv2_img[::stride,::stride]
     
     # if image format isn't already uint8, make it uint8 for visualization purposes
     if cv2_img.dtype != np.uint8:
